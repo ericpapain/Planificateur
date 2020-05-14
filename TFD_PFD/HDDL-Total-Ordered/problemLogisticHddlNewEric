@@ -1,0 +1,36 @@
+(define
+	(problem pfile01)
+	(:domain  grue_htn)
+	(:objects
+            crane_entrepot crane_aero - grues
+            pqt - colis
+            pqt1 pqt2 pqt3 - colis
+            pile - Pile
+
+            aeroport - Aeroport
+            entrepot - Entrepot
+            camion - camion
+	)
+
+	(:htn
+		:parameters ()
+		:subtasks (and
+              		 (task0 (livrer_colis_aeroport pqt aeroport))
+            	)
+	)
+	(:init
+        (voisin_de aeroport entrepot)
+        (voisin_de entrepot aeroport)
+
+        (vide camion)
+        (vide crane_aero)
+        (vide crane_entrepot)
+
+        (place crane_aero aeroport)
+        (place pqt entrepot)
+        (place camion entrepot)
+        (place crane_entrepot entrepot)
+
+	)
+
+)

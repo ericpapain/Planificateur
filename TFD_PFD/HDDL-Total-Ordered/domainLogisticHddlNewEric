@@ -1,0 +1,189 @@
+(define (domain grue_htn)
+	(:requirements :typing :negative-preconditions :hierachie)
+
+  (:types colis  Pieces grues Transport - object
+          camion Avion Robot - Transport
+         Atelier Entreprise Entrepot  Aeroport Ville position - location
+
+  )
+
+  (:predicates
+                (place ?objt - object ?loc - location)
+                (est_dans ?pos - position ?Ville - Ville)
+                (voisin_de ?loc - location ?loc - location)
+                (vide ?objt - object)
+                (libre ?atelier - Atelier)
+                (est_dans_colis ?piece - Pieces ?pqt - colis)
+                (poser_sur ?pqt - colis ?transport - Transport)
+                (poser_sur_atelier ?objt - object ?atelier - Atelier)
+                (tenue_par_grue ?pqt - colis ?grue - grues)
+                (ouvert ?obt - object)
+                (tenue_par_robot ?piece - Pieces ?robot - Robot)
+
+                ;;;; definition des pile;;;
+
+
+  )
+
+;;;;;;;;;;;;;;;;definition des différentes tâches;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(:tasks
+  (livrer_colis_aeroport ?pqt - colis ?aero - Aeroport)
+  (charger_le_camion ?camion - camion ?pqt - colis)
+  (decharger_le_camion ?pqt - colis ?grue - grues)
+  (deposer_colis ?pqt - colis ?aero - Aeroport)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;défintion des différentes méthodes associés;;;;;;;;;;;;
+
+	(:method livrer_colis_aeroport
+		:parameters (?entrepot - Entrepot ?aero - Aeroport ?pqt - colis ?camion - camion)
+		:task (livrer_colis_aeroport ?pqt ?aero)
+		:subtasks (and
+            		 (task0 (charger_le_camion ?camion ?pqt))
+            		 (task1 (deplacer_camion_de ?entrepot ?aero ?camion))
+                 (task2 (deposer_colis ?pqt ?aero))
+          		)
+		:ordering (and
+			           (task0 < task1)
+                 (task1 < task2)
+		          )
+	)
+
+;;;;;;;;;;;;;;;decharger le colis du camion;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (:method deposer_colis
+		:parameters (?aero - Aeroport ?pqt - colis ?camion - camion ?grue - grues)
+		:task (deposer_colis ?pqt ?aero)
+		:subtasks (and
+                  (task0 (saisi_colis_du_camion_par_grue ?grue ?pqt ?camion ?aero))
+                  (task1 (deposer_colis_tenu_par_grue_au_sol ?grue ?pqt ?aero))
+          		)
+		:ordering (and
+			           (task0 < task1)
+		)
+	)
+
+;;;;;;;;;;;;poser le colis sur le camion;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+	(:method charger_le_camion
+    :parameters (?camion - camion ?pos - location ?pqt - colis ?grue - grues)
+		:task (charger_le_camion ?camion ?pqt)
+    :subtasks (and
+            		 (task0 (prendre_colis_du_sol_par_grue ?grue ?pqt ?pos))
+            		 (task1 (deposer_colis_sur_le_camion ?grue ?pqt ?camion ?pos))
+          		)
+    :ordering (and
+			           (task0 < task1)
+		)
+	)
+
+;;;;;;;;;;;;; deposer le colis au sol;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+	(:method decharger_le_camion
+		:parameters (?pqt - colis ?grue - grues ?camion - camion ?pos - location)
+		:task (decharger_le_camion ?pqt ?grue)
+		:subtasks (and
+          		    (task0 (saisi_colis_du_camion_par_grue ?grue ?pqt ?camion ?pos))
+                  (task1 (deposer_colis_tenu_par_grue_au_sol ?grue ?pqt ?pos))
+          		)
+    :ordering (and
+			           (task0 < task1)
+		)
+	)
+
+;;;;;;;;;;;;;;;;;05 actions;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(:action deplacer_camion_de
+  :parameters (?entrepot - Entrepot ?aero - Aeroport ?camion - camion)
+  :precondition (and
+                      (place ?camion ?entrepot)
+                      (voisin_de ?entrepot ?aero)
+                      (voisin_de ?aero ?entrepot)
+                 )
+  :effect (and
+              (not(place ?camion ?entrepot))
+              (place ?camion ?aero)
+  )
+)
+
+;;;;;;;;;;;
+
+(:action deposer_colis_tenu_par_grue_au_sol
+  :parameters (?grue - grues ?pqt - colis ?pos - location)
+  :precondition (and
+                      ;;(not(place ?pqt ?pos))
+                      (place ?grue ?pos)
+                      (not(vide ?grue))
+                      (tenue_par_grue ?pqt ?grue)
+                 )
+
+  :effect (and
+              (vide ?grue)
+              (place ?pqt ?pos)
+              (not(tenue_par_grue ?pqt ?grue))
+              ;;(livrer_a ?pqt ?pos)
+  )
+)
+
+;;;
+
+;;;;;;;;;;;
+
+(:action saisi_colis_du_camion_par_grue
+  :parameters (?grue - grues ?pqt - colis ?camion - camion ?pos - location)
+  :precondition (and
+                      (place ?grue ?pos)
+                      (place ?camion ?pos)
+                      (vide ?grue)
+                      (poser_sur ?pqt ?camion)
+                 )
+
+  :effect (and
+              (not(vide ?grue))
+              (not(poser_sur ?pqt ?camion))
+              (vide ?camion)
+              (tenue_par_grue ?pqt ?grue)
+  )
+)
+
+;;;;;;;;;;
+
+(:action prendre_colis_du_sol_par_grue
+  :parameters (?grue - grues ?pqt - colis ?pos - location)
+  :precondition (and
+                      (place ?pqt ?pos)
+                      (place ?grue ?pos)
+                      (vide ?grue)
+                 )
+
+  :effect (and
+              (not(place ?pqt ?pos))
+              (not(vide ?grue))
+              (tenue_par_grue ?pqt ?grue)
+  )
+)
+
+;;;;;;;;;
+
+(:action deposer_colis_sur_le_camion
+  :parameters (?grue - grues ?pqt - colis ?camion - camion ?pos - location)
+  :precondition (and
+                      ;;(not(place ?pqt ?pos))
+                      (place ?grue ?pos)
+                      (place ?camion ?pos)
+                      (vide ?camion)
+                      (not(vide ?grue))
+
+                      (tenue_par_grue ?pqt ?grue)
+                      ;;(not(poser_sur ?pqt ?camion))
+                 )
+
+  :effect (and
+              (not(vide ?camion))
+              (vide ?grue)
+              (poser_sur ?pqt ?camion)
+              (not(tenue_par_grue ?pqt ?grue))
+  )
+)
+)
