@@ -30,13 +30,113 @@ import fr.uga.pddl4j.tutorial.tfd.NodeTFD;
 
 		  
   /**
+   * we compute the task who don't have a predecessor in our taskNetwork
+   */
+  public List<Integer> taskDontHavePredecessor(TaskNetwork tasknetwork) {
+	  //the list of that tasks
+	  LinkedList<Integer> listTasks = new LinkedList<Integer>();
+	  if (tasknetwork.isTotallyOrdered()== false) {
+		  //compute their transitive closure
+		 tasknetwork.transitiveClosure();
+	     //we search that task in the tasknetwork
+		 for (int i = 0; i < tasknetwork.getOrderingConstraints().columns(); i++) {
+	         if (tasknetwork.getOrderingConstraints().getColumn(i).cardinality() == 0) {
+	            //collect all the tasks with no predecessor
+	        	 listTasks.add(i);
+	        }
+	    }
+	}
+	return listTasks;
+}
+		  
+  /**
    * procédure Total Order Forwad Decomposition
+   * @param problem
+   * @return
    */
   
   public Plan search(final Problem problem) {
-	 
+	  /**
+	   * create the empty plan
+	   */
+	  Plan plan = null;
 	  
-	  return null;
+	  /**
+	   * construct the root node of our search
+	   */
+	  NodeTFD rootNode = new NodeTFD(problem.getInitialState(), null, problem.getInitialTaskNetwork(), Integer.MAX_VALUE);
+	  
+	  /**
+	   * create our openList browse all nodes
+	   */
+	  LinkedList<NodeTFD> openList = new LinkedList<NodeTFD>();
+	  
+	  //add our root node 
+	  openList.add(rootNode);
+	  
+	  /**
+	   * Beginning of our Total Forward Decomposition for STN
+	   */
+	  
+	  while (!openList.isEmpty()&&plan==null) {
+		// we pop the first node in our openList
+		  NodeTFD currentNode = openList.poll();
+		  
+		  //we verified that our node have a Tasks in they Tasknetwork, if no the process can end and we can extract our plan 
+		  
+		  if (currentNode.getTaskNetwork().isEmpty()) {
+			  plan = this.extractPlan(currentNode, problem);
+		  } else {
+			  //list of tasks with no predecessor 
+			  List<Integer> taskWithNoPred = taskDontHavePredecessor(currentNode.getTaskNetwork());
+			  //we get the current state of that tasks
+			  State state = currentNode.getState();
+			  //visit of all the node with no predecessor
+			  for (Integer task : taskWithNoPred) {
+				  if (problem.getTasks().get(task).isPrimtive()){					  
+					  List<Integer> pertinentOperator = problem.getRelevantOperators().get(task);
+					  
+					  for (Integer operator : pertinentOperator) {
+						  Action action = problem.getActions().get(operator);
+						  if (state.satisfy(action.getPreconditions())) {
+							NodeTFD successorNode = new NodeTFD(currentNode);
+							successorNode.setOperator(operator);
+							successorNode.setParent(currentNode);
+							successorNode.getState().apply(action.getCondEffects());
+							/**
+							 * change the predecessor contrainst ask it to  Damien and Fiorino
+							 */
+							//openList.push(successorNode);
+							openList.add(successorNode);
+						}  
+					  }
+					  
+				} else {// in that case the task is compound we'll use a method to decompose our task
+					//the same procedure, just our operator and subtask is new value
+					   List<Integer> pertinentMethod = problem.getRelevantOperators().get(task);
+					   
+					   for (Integer operator : pertinentMethod) {
+						   Method method = problem.getMethods().get(operator);
+							  // System.out.println(method.getName());
+						   if (state.satisfy(method.getPreconditions())) {
+							NodeTFD successorNode = new NodeTFD(currentNode);
+							successorNode.setState(state);
+							successorNode.setParent(currentNode);
+							successorNode.setOperator(problem.getActions().size()+operator);
+							/**
+							 * change the predecessor contrainst ask it to  Damien and Fiorino
+							 */		
+							//openList.push(successorNode);
+							openList.add(successorNode);
+						}
+					}	
+				}
+			}
+		  }
+		  
+	  }
+	  	 
+	  return plan;
 }
 		  
 		  
