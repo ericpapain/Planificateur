@@ -1,0 +1,282 @@
+(define (domain industrial)
+
+;; Defining options for the planning system
+(:requirements
+      :strips
+      :typing
+      :total-ordered-htn
+      :htn-method-preconditions
+      :negative-preconditions
+      :equality
+)
+
+;; Defining types
+(:types
+  robot - agent
+  conveyor unit - location
+  piece operation tray - object
+)
+
+(:constants
+      stop - operation
+)
+
+(:predicates
+      ;robot
+      (robot_available ?robot - robot)
+      (robot_at ?robot - robot ?l - location)
+
+      ;conveyor
+      (conveyor_accepted_piece ?piece - piece ?conv - conveyor)
+      (conveyor_available ?conv - conveyor)
+      (conveyor_unit ?conv - conveyor ?unit - unit)
+
+      ;unit
+      (unit_accepted_piece ?piece - piece ?unit - unit)
+      (unit_available ?unit - unit)
+      (unit_operation ?op - operation ?unit - unit)
+
+      ;tray
+      (tray_on_unit ?tray - tray ?unit - unit)
+      (tray_on_conv ?tray - tray ?conv - conveyor)
+      (tray_on_robot ?tray - tray ?robot - robot)
+      (tray_completed ?tray - tray)
+
+      ;piece
+      (piece_on ?piece - piece ?tray - tray)
+
+      ;stack of operations
+      (start ?op - operation ?tray - tray ?unit - unit)
+      (todo ?opontop - operation ?nextop - operation ?tray - tray ?unit - unit)
+  )
+
+  ;------------------------------------------------------------------
+  ;                               tasks
+  ;------------------------------------------------------------------
+
+    (:tasks
+          (move_robot ?robot - robot ?from - location  ?to - location)
+          (load_conv ?conv - conveyor ?robot - robot ?tray - tray)
+          (load_unit ?unit - unit ?conv - conveyor ?tray - tray)
+          (unit_execute_operation-task ?unit - unit ?top - operation ?next - operation ?tray - tray)
+          (tray_completed-task ?tray - tray ?unit - unit)
+    )
+
+  ;------------------------------------------------------------------
+  ;                               Methods
+  ;------------------------------------------------------------------
+
+  (:method move_robot-stocker
+    :parameters (?robot - robot ?from - conveyor ?to - unit ?unit - unit ?tray - tray ?newLoc - conveyor)
+    :task (move_robot ?robot ?from ?to)
+    :precondition (and
+                     (robot_available ?robot)
+                     (robot_at ?robot ?from)
+                     (tray_on_unit ?tray ?unit)
+                )
+        :subtasks (and
+                      (task0 (robot_goto ?robot ?from ?to))
+                      (task1 (pickup_tray_on_unit ?robot ?unit ?tray))
+                      (task2 (robot_goto ?robot ?to ?newLoc))
+                  )
+        :ordering (and
+                      (task0 < task1)
+                      (task1 < task2)
+                    )
+  )
+;;
+
+  (:method move_robot
+    :parameters (?robot - robot ?from - location ?to - location ?unit - unit ?tray - tray ?conv - conveyor ?piece - piece)
+    :task (move_robot ?robot ?from ?to)
+    :precondition (and
+                     (robot_available ?robot)
+                     (robot_at ?robot ?from)
+                     (tray_on_unit ?tray ?unit)
+                )
+        :subtasks (and
+                      (task0 (pickup_tray_on_unit ?robot ?unit ?tray))
+                      (task1 (robot_goto ?robot ?from ?to))
+                  )
+        :ordering (and
+                      (task0 < task1)
+                    )
+  )
+;;
+  (:method m-load_conv
+      :parameters   (?to ?from - location ?tray - tray ?robot - robot ?conv - conveyor ?piece - piece)
+      :task (load_conv ?conv ?robot ?tray)
+      :precondition (and
+                        (conveyor_available ?conv)
+                        (conveyor_accepted_piece ?piece ?conv)
+                    )
+          :subtasks (and
+                        (task0 (move_robot ?robot ?from ?to))
+                        (task1 (drop_tray_on_conveyor ?robot ?conv ?tray ?piece))
+          )
+          :ordering (and
+                        (task0 < task1)
+                      )
+  )
+;;
+  (:method m-load_unit
+      :parameters   (?to - conveyor ?from - location ?tray - tray ?robot - robot ?piece - piece ?unit - unit)
+      :task (load_unit ?unit ?to ?tray)
+      :precondition (and
+                       (unit_available ?unit)
+                    )
+          :subtasks (and
+                        (task0 (load_conv ?to ?robot ?tray))
+                        (task1 (conveyor_load_tray_in_unit ?robot ?to ?unit ?tray ?piece))
+          )
+          :ordering (and
+                        (task0 < task1)
+                    )
+  )
+;;
+  (:method m-unit_execute_operation-task
+      :parameters   (?unit - unit ?top - operation ?next - operation ?conv - conveyor ?tray - tray)
+      :task (tray_completed-task ?tray ?unit)
+      :precondition (and
+                         (start ?top ?tray ?unit)
+                         (todo ?top ?next ?tray ?unit)
+                         (unit_operation ?top ?unit)
+                         ;(conveyor_unit ?conv ?unit)
+                    )
+                :subtasks (and
+                                    (task0 (load_unit ?unit ?conv ?tray))
+                                    (task1 (unit_execute_operation ?unit ?top ?next ?tray))
+                                    (task2 (tray_completed-task ?tray ?unit))
+                                  )
+                        :ordering (and
+                                      (task0 < task1)
+                                      (task1 < task2)
+                                  )
+  )
+;;
+  (:method m-unit_execute_operation-task_bis
+      :parameters   (?unit - unit ?top - operation ?next - operation ?tray - tray)
+      :task (tray_completed-task ?tray ?unit)
+      :precondition (and
+                         (tray_on_unit ?tray ?unit)
+                         (start ?top ?tray ?unit)
+                         (unit_operation ?top ?unit)
+                         (todo ?top ?next ?tray ?unit)
+                    )
+            :subtasks (and
+                                (task0 (unit_execute_operation ?unit ?top ?next ?tray))
+                                (task1 (tray_completed-task ?tray ?unit))
+                              )
+                    :ordering (and
+                                  (task0 < task1)
+                              )
+  )
+;;
+  (:method m-tray_completed-task
+      :parameters   (?op - operation ?tray - tray ?unit - unit)
+      :task (tray_completed-task ?tray ?unit)
+      :precondition (and
+                        (start stop ?tray ?unit)
+                        (tray_on_unit ?tray ?unit)
+                        (unit_operation ?op ?unit)
+                        ;(todo ?op stop ?tray ?unit)
+                    )
+      :ordered-subtasks (and
+                          (task0 (tray_completed ?tray ?unit))
+                        )
+  )
+
+  ;------------------------------------------------------------------
+  ;                               actions
+  ;------------------------------------------------------------------
+
+  (:action pickup_tray_on_unit
+      :parameters (?robot - robot ?unit - unit ?tray - tray)
+      :precondition (and (robot_available ?robot)
+                         (robot_at ?robot ?unit)
+                         (tray_on_unit ?tray ?unit)
+                    )
+      :effect (and (not (tray_on_unit ?tray ?unit))
+                   (not (robot_available ?robot))
+                   (tray_on_robot ?tray ?robot)
+                   (unit_available ?unit)
+              )
+    )
+
+    (:action drop_tray_on_conveyor
+        :parameters (?robot - robot ?conv - conveyor ?tray - tray ?piece - piece)
+        :precondition (and (conveyor_available ?conv)
+                           (robot_at ?robot ?conv)
+                           (tray_on_robot ?tray ?robot)
+                           (conveyor_accepted_piece ?piece ?conv)
+                           (piece_on ?piece ?tray)
+                      )
+        :effect (and (not (conveyor_available ?conv))
+                     (not (tray_on_robot ?tray ?robot))
+                     (tray_on_conv ?tray ?conv)
+                     (robot_available ?robot))
+      )
+
+    (:action robot_goto
+        :parameters (?robot - robot ?from - location ?to - location)
+        :precondition (and (robot_at ?robot ?from))
+        :effect (and
+                    (robot_at ?robot ?to)
+                    (not (robot_at ?robot ?from)))
+    )
+
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;  (:action robot_move_U_C
+        ;      :parameters (?robot - robot ?from - unit ?to - conveyor)
+        ;      :precondition (and (robot_at ?robot ?from))
+        ;      :effect (and (robot_at ?robot ?to) (not (robot_at ?robot ?from)))
+        ;  )
+        ;;;;
+        ;    (:action robot_move_C_U
+        ;        :parameters (?robot - robot ?from - conveyor ?to - unit)
+        ;        :precondition (and (robot_at ?robot ?from))
+        ;        :effect (and (robot_at ?robot ?to) (not (robot_at ?robot ?from)))
+        ;    )
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+    (:action conveyor_load_tray_in_unit
+        :parameters (?robot - robot ?conv - conveyor ?unit - unit ?tray - tray ?piece - piece)
+        :precondition (and (unit_available ?unit)
+                           (conveyor_unit ?conv ?unit)
+                           (unit_accepted_piece ?piece ?unit)
+                           (piece_on ?piece ?tray)
+                           (tray_on_conv ?tray ?conv)
+                      )
+        :effect (and (not (tray_on_conv ?tray ?conv))
+                     (not (unit_available ?unit))
+                     (tray_on_unit ?tray ?unit)
+                     (conveyor_available ?conv)
+                     (robot_at ?robot ?unit))
+    )
+
+    (:action unit_execute_operation
+        :parameters (?unit - unit ?top - operation ?next - operation ?tray - tray)
+        :precondition (and (unit_operation ?top ?unit)
+                           (tray_on_unit ?tray ?unit)
+                           (start ?top ?tray ?unit)
+                           (todo ?top ?next ?tray ?unit)
+                      )
+        :effect (and
+                     (start ?next ?tray ?unit)
+                     (not (todo ?top ?next ?tray ?unit))
+                     (not (start ?top ?tray ?unit))
+                )
+    )
+
+    (:action tray_completed
+        :parameters (?tray - tray ?unit - unit)
+        :precondition (and (start stop ?tray ?unit)
+                           (tray_on_unit ?tray ?unit)
+                      )
+        :effect (and (tray_completed ?tray)
+                     (tray_on_unit ?tray ?unit)
+                     (unit_available ?unit)
+                )
+    )
+)

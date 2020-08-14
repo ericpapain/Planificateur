@@ -1,0 +1,173 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; problem with 1 piece 10 conveyor 1 robot 10 traitment unit 1 tray and ;
+; 1-1-1 operations  pear processing unit                                                      ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (problem industrial)
+  (:domain industrial)
+  (:objects
+    unit1 unit2 unit3 unit4 unit5 unit6 unit7 unit8 unit9 unit10 stocker - unit
+    conv1 conv2 conv3 conv4 conv5 conv6 conv7 conv8 conv9 conv10 - conveyor
+    robot1 - robot
+
+    tray1 - tray
+    piece1 - piece
+    op10 op20 op30 op40 op50 op60 op70 op80 op90 op100 - operation
+  )
+
+
+  (:htn
+    :ordered-subtasks (and
+                          (t0(tray_completed-task tray1 unit1))
+                          (t1(tray_completed-task tray1 unit2))
+                          (t2(tray_completed-task tray1 unit3))
+                          (t3(tray_completed-task tray1 unit4))
+                          (t4(tray_completed-task tray1 unit5))
+                          (t5(tray_completed-task tray1 unit6))
+                          (t6(tray_completed-task tray1 unit7))
+                          (t7(tray_completed-task tray1 unit8))
+                          (t8(tray_completed-task tray1 unit9))
+                          (t9(tray_completed-task tray1 unit10))
+                      )
+                      :ordering (and
+                                    (t0<t1)
+                                    (t1<t2)
+                                    (t2<t3)
+                                    (t3<t4)
+                                    (t4<t5)
+                                    (t5<t6)
+                                    (t6<t7)
+                                    (t8<t9)
+                      )
+  )
+
+  (:init
+    ;;Operation schedule
+
+    ;;unit1
+    (start op10 tray1 unit1)
+    (todo op10 stop tray1 unit1)
+
+    ;;unit2
+    (start op20 tray1 unit2)
+    (todo op20 stop tray1 unit2)
+
+    ;;unit3
+    (start op30 tray1 unit3)
+    (todo op30 stop tray1 unit3)
+
+    ;;unit4
+    (start op40 tray1 unit4)
+    (todo op40 stop tray1 unit4)
+
+    ;;unit5
+    (start op50 tray1 unit5)
+    (todo op50 stop tray1 unit5)
+
+    ;;unit6
+    (start op60 tray1 unit6)
+    (todo op60 stop tray1 unit6)
+
+    ;;unit7
+    (start op70 tray1 unit7)
+    (todo op70 stop tray1 unit7)
+
+    ;;unit8
+    (start op80 tray1 unit8)
+    (todo op80 stop tray1 unit8)
+
+    ;;unit9
+    (start op90 tray1 unit9)
+    (todo op90 stop tray1 unit9)
+
+    ;;unit10
+    (start op100 tray1 unit10)
+    (todo op100 stop tray1 unit10)
+
+    ;;Initiate piece / tray
+    (piece_on piece1 tray1)
+
+    (tray_on_unit tray1 stocker)
+
+    ;;Initiate robot
+    (robot_at robot1 stocker)
+    (robot_available robot1)
+
+    ;;Initiate conveyor
+    (conveyor_unit conv1 unit1)
+    (conveyor_unit conv2 unit2)
+    (conveyor_unit conv3 unit3)
+    (conveyor_unit conv4 unit4)
+    (conveyor_unit conv5 unit5)
+    (conveyor_unit conv6 unit6)
+    (conveyor_unit conv7 unit7)
+    (conveyor_unit conv8 unit8)
+    (conveyor_unit conv9 unit9)
+    (conveyor_unit conv10 unit10)
+
+    ;;Setup unit
+    (unit_accepted_piece piece1 stocker)
+    (unit_accepted_piece piece1 unit1)
+    (unit_accepted_piece piece1 unit2)
+    (unit_accepted_piece piece1 unit3)
+    (unit_accepted_piece piece1 unit4)
+    (unit_accepted_piece piece1 unit5)
+    (unit_accepted_piece piece1 unit6)
+    (unit_accepted_piece piece1 unit7)
+    (unit_accepted_piece piece1 unit8)
+    (unit_accepted_piece piece1 unit9)
+    (unit_accepted_piece piece1 unit10)
+
+    (unit_operation op10 unit1)
+    (unit_operation op20 unit2)
+    (unit_operation op30 unit3)
+    (unit_operation op40 unit4)
+    (unit_operation op50 unit5)
+    (unit_operation op60 unit6)
+    (unit_operation op70 unit7)
+    (unit_operation op80 unit8)
+    (unit_operation op90 unit9)
+    (unit_operation op100 unit10)
+
+    (unit_available unit1)
+    (unit_available unit2)
+    (unit_available unit3)
+    (unit_available unit4)
+    (unit_available unit5)
+    (unit_available unit6)
+    (unit_available unit7)
+    (unit_available unit8)
+    (unit_available unit9)
+    (unit_available unit10)
+
+    ;;Setup conveyor
+    (conveyor_accepted_piece piece1 conv1)
+    (conveyor_available conv1)
+
+    (conveyor_accepted_piece piece1 conv2)
+    (conveyor_available conv2)
+
+    (conveyor_accepted_piece piece1 conv3)
+    (conveyor_available conv3)
+
+    (conveyor_accepted_piece piece1 conv4)
+    (conveyor_available conv4)
+
+    (conveyor_accepted_piece piece1 conv5)
+    (conveyor_available conv5)
+
+    (conveyor_accepted_piece piece1 conv6)
+    (conveyor_available conv6)
+
+    (conveyor_accepted_piece piece1 conv7)
+    (conveyor_available conv7)
+
+    (conveyor_accepted_piece piece1 conv8)
+    (conveyor_available conv8)
+
+    (conveyor_accepted_piece piece1 conv9)
+    (conveyor_available conv9)
+
+    (conveyor_accepted_piece piece1 conv10)
+    (conveyor_available conv10)
+  )
+)
