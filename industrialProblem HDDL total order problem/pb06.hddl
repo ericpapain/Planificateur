@@ -1,0 +1,78 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; problem with 2 piece 2 conveyor 2 robot 2 traitment unit 2 tray and ;
+; 2 operation                                                         ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (problem industrial)
+  (:domain industrial)
+  (:objects
+    unit1 unit2 stocker - unit
+    conv1 conv2  - conveyor
+    robot1 robot2 - robot
+
+    tray1 tray2 - tray
+    piece1 piece2 - piece
+    op10 op20 - operation
+  )
+
+
+  (:htn
+    :ordered-subtasks (and
+
+                          (t0(tray_completed-task tray1 unit1))
+                          (t1(tray_completed-task tray2 unit2))
+                      )
+  )
+
+  (:init
+    ;;Operation schedule
+
+    ;;unit1
+    (start op10 tray1 unit1)
+    (todo op10 stop tray1 unit1)
+
+    ;;unit2
+    (start op20 tray2 unit2)
+    (todo op20 stop tray2 unit2)
+
+    ;;Initiate piece / tray
+    (piece_on piece1 tray1)
+    (piece_on piece2 tray2)
+
+    (tray_on_unit tray1 stocker)
+    (tray_on_unit tray2 stocker)
+
+    ;;Initiate robot
+    (robot_at robot1 stocker)
+    (robot_available robot1)
+
+    (robot_at robot2 stocker)
+    (robot_available robot2)
+
+
+
+    ;;Initiate conveyor
+    (conveyor_unit conv1 unit1)
+    (conveyor_unit conv2 unit2)
+
+    ;;Setup unit
+    (unit_accepted_piece piece1 stocker)
+    (unit_accepted_piece piece1 unit1)
+    (unit_operation op10 unit1)
+
+    (unit_accepted_piece piece2 stocker)
+    (unit_accepted_piece piece2 unit2)
+    (unit_operation op20 unit2)
+
+    (unit_available unit1)
+    (unit_available unit2)
+
+    ;;Setup conveyor
+    (conveyor_accepted_piece piece1 conv1)
+    (conveyor_available conv1)
+
+    (conveyor_accepted_piece piece2 conv2)
+    (conveyor_available conv2)
+
+  )
+
+)

@@ -1,0 +1,69 @@
+
+Parsing domain (domainTFD.hddl) and problem (pb26.hddl) done successfully
+
+Encoding problem done successfully (611 actions, 715771 methods, 189 fluents, 1007 tasks)
+
+Searching a solution plan....
+
+Found plan as follows:
+00: (                   pickup_tray_on_unit robot1 stocker tray1) [0]
+01: (                           robot_goto robot1 stocker conv10) [0]
+02: (           drop_tray_on_conveyor robot1 conv10 tray1 piece1) [0]
+03: (conveyor_load_tray_in_unit robot1 conv10 unit1 tray1 piece1) [0]
+04: (               unit_execute_operation unit1 op10 stop tray1) [0]
+05: (                                 tray_completed tray1 unit1) [0]
+06: (                     pickup_tray_on_unit robot1 unit1 tray1) [0]
+07: (                            robot_goto robot1 conv10 conv40) [0]
+08: (           drop_tray_on_conveyor robot1 conv40 tray1 piece1) [0]
+09: (conveyor_load_tray_in_unit robot1 conv40 unit4 tray1 piece1) [0]
+10: (               unit_execute_operation unit4 op40 op41 tray1) [0]
+11: (               unit_execute_operation unit4 op41 stop tray1) [0]
+12: (                                 tray_completed tray1 unit4) [0]
+13: (                   pickup_tray_on_unit robot4 stocker tray2) [0]
+14: (                           robot_goto robot4 stocker conv10) [0]
+15: (           drop_tray_on_conveyor robot4 conv10 tray2 piece2) [0]
+16: (conveyor_load_tray_in_unit robot4 conv10 unit1 tray2 piece2) [0]
+17: (               unit_execute_operation unit1 op10 op11 tray2) [0]
+18: (               unit_execute_operation unit1 op11 stop tray2) [0]
+19: (                                 tray_completed tray2 unit1) [0]
+20: (                     pickup_tray_on_unit robot4 unit1 tray2) [0]
+21: (                            robot_goto robot4 conv10 conv20) [0]
+22: (           drop_tray_on_conveyor robot4 conv20 tray2 piece2) [0]
+23: (conveyor_load_tray_in_unit robot4 conv20 unit2 tray2 piece2) [0]
+24: (               unit_execute_operation unit2 op20 op21 tray2) [0]
+25: (               unit_execute_operation unit2 op21 stop tray2) [0]
+26: (                                 tray_completed tray2 unit2) [0]
+27: (                     pickup_tray_on_unit robot4 unit2 tray2) [0]
+28: (                             robot_goto robot4 unit1 conv30) [0]
+29: (           drop_tray_on_conveyor robot4 conv30 tray2 piece2) [0]
+30: (conveyor_load_tray_in_unit robot4 conv30 unit3 tray2 piece2) [0]
+31: (               unit_execute_operation unit3 op30 op31 tray2) [0]
+32: (               unit_execute_operation unit3 op31 stop tray2) [0]
+33: (                                 tray_completed tray2 unit3) [0]
+34: (                     pickup_tray_on_unit robot4 unit3 tray2) [0]
+35: (                            robot_goto robot4 conv20 conv40) [0]
+36: (           drop_tray_on_conveyor robot4 conv40 tray2 piece2) [0]
+37: (conveyor_load_tray_in_unit robot4 conv40 unit4 tray2 piece2) [0]
+38: (               unit_execute_operation unit4 op40 op41 tray2) [0]
+39: (               unit_execute_operation unit4 op41 stop tray2) [0]
+40: (                                 tray_completed tray2 unit4) [0]
+41: (                   pickup_tray_on_unit robot2 stocker tray3) [0]
+42: (                           robot_goto robot2 stocker conv10) [0]
+43: (           drop_tray_on_conveyor robot2 conv10 tray3 piece3) [0]
+44: (conveyor_load_tray_in_unit robot2 conv10 unit1 tray3 piece3) [0]
+45: (               unit_execute_operation unit1 op10 op11 tray3) [0]
+46: (               unit_execute_operation unit1 op11 stop tray3) [0]
+47: (                                 tray_completed tray3 unit1) [0]
+48: (                   pickup_tray_on_unit robot3 stocker tray4) [0]
+49: (                           robot_goto robot3 stocker conv20) [0]
+50: (           drop_tray_on_conveyor robot3 conv20 tray4 piece4) [0]
+51: (conveyor_load_tray_in_unit robot3 conv20 unit2 tray4 piece4) [0]
+52: (               unit_execute_operation unit2 op20 op21 tray4) [0]
+53: (               unit_execute_operation unit2 op21 stop tray4) [0]
+54: (                                 tray_completed tray4 unit2) [0]
+
+Plan total cost      : 55,00
+Encoding time        : 10,550s
+Searching time       : 23,762s
+Total time           : 34,312s
+

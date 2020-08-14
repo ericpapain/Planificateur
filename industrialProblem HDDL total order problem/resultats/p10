@@ -1,0 +1,47 @@
+
+Parsing domain (domainTFD.hddl) and problem (pb10.hddl) done successfully
+
+Encoding problem done successfully (150 actions, 7976 methods, 57 fluents, 306 tasks)
+
+Searching a solution plan....
+
+Found plan as follows:
+00: (                  pickup_tray_on_unit robot1 stocker tray1) [0]
+01: (                           robot_goto robot1 stocker conv1) [0]
+02: (           drop_tray_on_conveyor robot1 conv1 tray1 piece1) [0]
+03: (conveyor_load_tray_in_unit robot1 conv1 unit1 tray1 piece1) [0]
+04: (              unit_execute_operation unit1 op10 stop tray1) [0]
+05: (                                tray_completed tray1 unit1) [0]
+06: (                    pickup_tray_on_unit robot1 unit1 tray1) [0]
+07: (                             robot_goto robot1 conv1 conv2) [0]
+08: (           drop_tray_on_conveyor robot1 conv2 tray1 piece1) [0]
+09: (conveyor_load_tray_in_unit robot1 conv2 unit2 tray1 piece1) [0]
+10: (              unit_execute_operation unit2 op20 stop tray1) [0]
+11: (                                tray_completed tray1 unit2) [0]
+12: (                    pickup_tray_on_unit robot1 unit2 tray1) [0]
+13: (                             robot_goto robot1 unit2 conv3) [0]
+14: (           drop_tray_on_conveyor robot1 conv3 tray1 piece1) [0]
+15: (conveyor_load_tray_in_unit robot1 conv3 unit3 tray1 piece1) [0]
+16: (              unit_execute_operation unit3 op30 stop tray1) [0]
+17: (                                tray_completed tray1 unit3) [0]
+18: (                    pickup_tray_on_unit robot1 unit3 tray1) [0]
+19: (                             robot_goto robot1 conv3 conv4) [0]
+20: (           drop_tray_on_conveyor robot1 conv4 tray1 piece1) [0]
+21: (conveyor_load_tray_in_unit robot1 conv4 unit4 tray1 piece1) [0]
+22: (              unit_execute_operation unit4 op40 stop tray1) [0]
+23: (                                tray_completed tray1 unit4) [0]
+24: (                    pickup_tray_on_unit robot1 unit4 tray1) [0]
+25: (                             robot_goto robot1 unit3 conv5) [0]
+26: (           drop_tray_on_conveyor robot1 conv5 tray1 piece1) [0]
+27: (conveyor_load_tray_in_unit robot1 conv5 unit5 tray1 piece1) [0]
+28: (              unit_execute_operation unit5 op50 op60 tray1) [0]
+29: (              unit_execute_operation unit5 op60 op70 tray1) [0]
+30: (              unit_execute_operation unit5 op70 op80 tray1) [0]
+31: (              unit_execute_operation unit5 op80 stop tray1) [0]
+32: (                                tray_completed tray1 unit5) [0]
+
+Plan total cost      : 33,00
+Encoding time        : 0,610s
+Searching time       : 0,259s
+Total time           : 0,869s
+

@@ -1,0 +1,15 @@
+
+Parsing domain (domainTFD.hddl) and problem (pb27.hddl) done successfully
+
+Encoding problem done successfully (625 actions, 716152 methods, 200 fluents, 1040 tasks)
+
+Searching a solution plan....
+
+
+no plan found
+
+
+Encoding time        : 10,316s
+Searching time       : 600,001s
+Total time           : 610,317s
+

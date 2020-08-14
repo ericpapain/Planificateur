@@ -1,0 +1,128 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; problem with 1 piece 10 conveyor 1 robot 10 traitment unit 1 tray and ;
+; 1-1-1 operations  pear processing unit                                                      ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (problem industrial)
+  (:domain industrial)
+  (:objects
+    unit1 unit2 unit3 unit4 unit5 stocker - unit
+    conv1 conv2 conv3 conv4 conv5 - conveyor
+    robot1 - robot
+
+    tray1 - tray
+    piece1 - piece
+    op10 op110 op120  op130 op20 op210 op220 op230 op30 op310 op320 op40 op50 op60 op70 op80 - operation
+  )
+
+  (:htn
+    :ordered-subtasks (and
+                          (t0(tray_completed-task tray1 unit1))
+                          (t1(tray_completed-task tray1 unit2))
+                          (t2(tray_completed-task tray1 unit3))
+                          (t3(tray_completed-task tray1 unit4))
+                          (t4(tray_completed-task tray1 unit5))
+                      )
+  )
+
+  (:init
+    ;;Operation schedule
+
+    ;;unit1
+    (start op10 tray1 unit1)
+    (todo op10 op110 tray1 unit1)
+    (todo op110 op120 tray1 unit1)
+    (todo op120 op130 tray1 unit1)
+    (todo op110 stop tray1 unit1)
+
+    ;;unit2
+    (start op20 tray1 unit2)
+    (todo op20 op210 tray1 unit2)
+    (todo op210 op220 tray1 unit2)
+    (todo op220 op230 tray1 unit2)
+    (todo op210 stop tray1 unit2)
+
+    ;;unit3
+    (start op30 tray1 unit3)
+    (todo op30 op310 tray1 unit3)
+    (todo op310 op320 tray1 unit3)
+    (todo op310 stop tray1 unit3)
+
+    ;;unit4
+    (start op40 tray1 unit4)
+    (todo op40 stop tray1 unit4)
+
+    ;;unit5
+    (start op50 tray1 unit5)
+    (todo op50 op60 tray1 unit5)
+    (todo op60 op70 tray1 unit5)
+    (todo op70 op80 tray1 unit5)
+    (todo op80 stop tray1 unit5)
+
+    ;;Initiate piece / tray
+    (piece_on piece1 tray1)
+
+    (tray_on_unit tray1 stocker)
+
+    ;;Initiate robot
+    (robot_at robot1 stocker)
+    (robot_available robot1)
+
+    ;;Initiate conveyor
+    (conveyor_unit conv1 unit1)
+    (conveyor_unit conv2 unit2)
+    (conveyor_unit conv3 unit3)
+    (conveyor_unit conv4 unit4)
+    (conveyor_unit conv5 unit5)
+
+    ;;Setup unit
+    (unit_accepted_piece piece1 stocker)
+    (unit_accepted_piece piece1 unit1)
+    (unit_accepted_piece piece1 unit2)
+    (unit_accepted_piece piece1 unit3)
+    (unit_accepted_piece piece1 unit4)
+    (unit_accepted_piece piece1 unit5)
+
+    (unit_operation op10 unit1)
+    (unit_operation op110 unit1)
+    (unit_operation op120 unit1)
+    (unit_operation op130 unit1)
+
+    (unit_operation op20 unit2)
+    (unit_operation op210 unit2)
+    (unit_operation op220 unit2)
+    (unit_operation op230 unit2)
+
+    (unit_operation op30 unit3)
+    (unit_operation op310 unit3)
+    (unit_operation op320 unit3)
+
+    (unit_operation op40 unit4)
+
+    (unit_operation op50 unit5)
+    (unit_operation op60 unit5)
+    (unit_operation op70 unit5)
+    (unit_operation op80 unit5)
+
+    (unit_available unit1)
+    (unit_available unit2)
+    (unit_available unit3)
+    (unit_available unit4)
+    (unit_available unit5)
+
+    ;;Setup conveyor
+    (conveyor_accepted_piece piece1 conv1)
+    (conveyor_available conv1)
+
+    (conveyor_accepted_piece piece1 conv2)
+    (conveyor_available conv2)
+
+    (conveyor_accepted_piece piece1 conv3)
+    (conveyor_available conv3)
+
+    (conveyor_accepted_piece piece1 conv4)
+    (conveyor_available conv4)
+
+    (conveyor_accepted_piece piece1 conv5)
+    (conveyor_available conv5)
+  )
+)

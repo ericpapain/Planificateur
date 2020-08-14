@@ -1,0 +1,21 @@
+
+Parsing domain (domainTFD.hddl) and problem (pb17.hddl) done successfully
+
+Encoding problem done successfully (1123 actions, 1128602 methods, 119 fluents, 2167 tasks)
+
+Searching a solution plan....
+
+Found plan as follows:
+0: (                   pickup_tray_on_unit robot4 stocker tray1) [0]
+1: (                           robot_goto robot4 stocker conv41) [0]
+2: (           drop_tray_on_conveyor robot4 conv41 tray1 piece1) [0]
+3: (conveyor_load_tray_in_unit robot4 conv41 unit4 tray1 piece1) [0]
+4: (               unit_execute_operation unit4 op40 op41 tray1) [0]
+5: (               unit_execute_operation unit4 op41 stop tray1) [0]
+6: (                                 tray_completed tray1 unit4) [0]
+
+Plan total cost      : 7,00
+Encoding time        : 149,328s
+Searching time       : 5,684s
+Total time           : 155,012s
+
