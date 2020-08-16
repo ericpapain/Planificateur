@@ -4,7 +4,7 @@
 (:requirements
       :strips
       :typing
-      :total-ordered-htn
+      :partial-ordered-htn
       :htn-method-preconditions
       :negative-preconditions
       :equality

@@ -16,7 +16,7 @@
 
 
   (:htn
-    :ordered-subtasks (and
+    :subtasks (and
                           (t0(tray_completed-task tray1 unit1))
                           (t1(tray_completed-task tray1 unit2))
                           (t2(tray_completed-task tray1 unit3))
